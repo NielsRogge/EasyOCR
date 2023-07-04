@@ -4,6 +4,8 @@ from torch.autograd import Variable
 from PIL import Image
 from collections import OrderedDict
 
+import onnx
+
 import cv2
 import numpy as np
 from .craft_utils import getDetBoxes, adjustResultCoordinates
@@ -44,6 +46,33 @@ def test_net(canvas_size, mag_ratio, net, image, text_threshold, link_threshold,
     # forward pass
     with torch.no_grad():
         y, feature = net(x)
+
+    height = 500
+    width = 500
+    in_shape=[1, 3, height, width]
+    dummy_input = torch.rand(in_shape)
+    dummy_input = dummy_input.to(device)
+
+    print("Exporting to ONNX...")
+
+    torch.onnx.export(
+        net.module,
+        dummy_input,
+        "detectionModel.onnx",
+        export_params=True,
+        opset_version=11,
+        input_names = ['input'],
+        output_names = ['output'],
+        dynamic_axes={'input' : {2 : 'height', 3: 'width'}},
+    )
+
+    onnx_model = onnx.load("detectionModel.onnx")
+    try:
+        onnx.checker.check_model(onnx_model)
+    except onnx.checker.ValidationError as e:
+        print('The model is invalid: %s' % e)
+    else:
+        print('The model is valid!')
 
     boxes_list, polys_list = [], []
     for out in y:
