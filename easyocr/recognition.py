@@ -98,7 +98,8 @@ class AlignCollate(object):
 
 def recognizer_predict(model, converter, test_loader, batch_max_length,\
                        ignore_idx, char_group_idx, decoder = 'greedy', beamWidth= 5, device = 'cpu'):
-    model.eval()
+    if model is not None:
+        model.eval()
     result = []
     with torch.no_grad():
         for image_tensors in test_loader:
@@ -108,7 +109,20 @@ def recognizer_predict(model, converter, test_loader, batch_max_length,\
             length_for_pred = torch.IntTensor([batch_max_length] * batch_size).to(device)
             text_for_pred = torch.LongTensor(batch_size, batch_max_length + 1).fill_(0).to(device)
 
-            preds = model(image, text_for_pred)
+            if model is not None:
+                print("Predicting using PyTorch model...")
+                preds = model(image, text_for_pred)
+            
+            else:
+                print("Predicting using ONNX model...")
+                import onnxruntime as rt
+
+                providers = ['CPUExecutionProvider']
+                session = rt.InferenceSession("recog.onnx", providers=providers)
+                inputs = session.get_inputs()
+                inp = {inputs[0].name: image.numpy()}
+                preds = session.run(None, inp)
+                preds = torch.from_numpy(preds[0])
 
             # Select max probabilty (greedy decoding) then decode index to character
             preds_size = torch.IntTensor([preds.size(1)] * batch_size)
