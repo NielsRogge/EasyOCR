@@ -53,27 +53,6 @@ def test_net(canvas_size, mag_ratio, net, image, text_threshold, link_threshold,
     dummy_input = torch.rand(in_shape)
     dummy_input = dummy_input.to(device)
 
-    print("Exporting to ONNX...")
-
-    torch.onnx.export(
-        net,
-        dummy_input,
-        "detectionModel.onnx",
-        export_params=True,
-        opset_version=11,
-        input_names = ['input'],
-        output_names = ['output'],
-        dynamic_axes={'input' : {2 : 'height', 3: 'width'}},
-    )
-
-    onnx_model = onnx.load("detectionModel.onnx")
-    try:
-        onnx.checker.check_model(onnx_model)
-    except onnx.checker.ValidationError as e:
-        print('The model is invalid: %s' % e)
-    else:
-        print('The model is valid!')
-
     boxes_list, polys_list = [], []
     for out in y:
         # make score and link map
