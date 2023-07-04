@@ -56,7 +56,7 @@ def test_net(canvas_size, mag_ratio, net, image, text_threshold, link_threshold,
     print("Exporting to ONNX...")
 
     torch.onnx.export(
-        net.module,
+        net,
         dummy_input,
         "detectionModel.onnx",
         export_params=True,
