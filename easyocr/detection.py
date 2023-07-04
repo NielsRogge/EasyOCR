@@ -4,8 +4,6 @@ from torch.autograd import Variable
 from PIL import Image
 from collections import OrderedDict
 
-import onnx
-
 import cv2
 import numpy as np
 from .craft_utils import getDetBoxes, adjustResultCoordinates
