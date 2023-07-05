@@ -117,10 +117,12 @@ def recognizer_predict(model, converter, test_loader, batch_max_length,\
                 print("Predicting using ONNX model...")
                 import onnxruntime as rt
 
-                providers = ['CPUExecutionProvider']
-                session = rt.InferenceSession("recog.onnx", providers=providers)
+                session = rt.InferenceSession("recog.onnx",
+                                              providers=[
+                                                ("CUDAExecutionProvider", {"cudnn_conv_algo_search": "DEFAULT"}),
+                                                "CPUExecutionProvider"])
                 inputs = session.get_inputs()
-                inp = {inputs[0].name: image.numpy()}
+                inp = {inputs[0].name: image.cpu().numpy()}
                 preds = session.run(None, inp)
                 preds = torch.from_numpy(preds[0])
 
