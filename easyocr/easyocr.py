@@ -360,8 +360,6 @@ class Reader(object):
         if reformat:
             img, img_cv_grey = reformat_input(img_cv_grey)
 
-        if img is not None:
-            print("Shape of img:", img.shape)
         if img_cv_grey is not None:
             print("Shape of img_grey:", img_cv_grey.shape)
 
