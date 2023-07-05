@@ -360,6 +360,12 @@ class Reader(object):
         if reformat:
             img, img_cv_grey = reformat_input(img_cv_grey)
 
+        print("Shape of img:", img.shape)
+        print("Shape of img_grey:", img_cv_grey.shape)
+
+        print("Horizontal list:", horizontal_list)
+        print("Free list:", free_list)
+
         if allowlist:
             ignore_char = ''.join(set(self.character)-set(allowlist))
         elif blocklist:
