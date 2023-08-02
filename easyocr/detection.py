@@ -69,6 +69,9 @@ def test_net(canvas_size, mag_ratio, net, image, text_threshold, link_threshold,
         boxes_list.append(boxes)
         polys_list.append(polys)
 
+    print("Boxes list:", boxes_list)
+    print("Polys list:", polys_list)
+
     return boxes_list, polys_list
 
 def get_detector(trained_model, device='cpu', quantize=True, cudnn_benchmark=False):
