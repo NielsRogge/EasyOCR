@@ -30,9 +30,12 @@ def test_net(canvas_size, mag_ratio, net, image, text_threshold, link_threshold,
     img_resized_list = []
     # resize
     for img in image_arrs:
+        print("Original img size:", img.shape)
         img_resized, target_ratio, size_heatmap = resize_aspect_ratio(img, canvas_size,
                                                                       interpolation=cv2.INTER_LINEAR,
                                                                       mag_ratio=mag_ratio)
+        print("Resized img size:", img_resized.shape)
+        print("Target ratio:", target_ratio)
         img_resized_list.append(img_resized)
     ratio_h = ratio_w = 1 / target_ratio
     # preprocessing
